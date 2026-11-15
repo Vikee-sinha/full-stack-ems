@@ -22,8 +22,8 @@ const Sidebar = () => {
         {name: "Dashboard", href: "/dashboard", icon: LayoutGridIcon},
         role === "ADMIN" ? 
         {name: "Employee", href: "/employees", icon: UserIcon} :
-        {name: "Attendance", href:"/attendence", icon: CalendarIcon},
-        {name: "Leave", href:"/leave", icon: FileTextIcon},
+        {name: "Attendance", href:"/attendance", icon: CalendarIcon},
+        {name: "Leaves", href:"/leaves", icon: FileTextIcon},
         {name: "Payslips", href:"/payslips", icon: DollarSignIcon},
         {name: "Settings", href:"/settings", icon: SettingsIcon}, 
     ]

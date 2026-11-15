@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import LoginLeftSide from "./LoginLeftSide";
+import { saveCurrentUser } from "../auth";
 import {
   ArrowLeft,
   Mail,
@@ -13,6 +14,7 @@ import {
 
 const LoginForm = ({ role, title, subtitle }) => {
   const isAdmin = role === "admin";
+  const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -30,8 +32,14 @@ const LoginForm = ({ role, title, subtitle }) => {
       return;
     }
 
-    // Authentication API will be connected here.
-    setError("Authentication is not connected yet.");
+    // Demo sign-in: the backend authentication API is not connected yet.
+    saveCurrentUser({
+      role: isAdmin ? "ADMIN" : "EMPLOYEE",
+      email: email.trim(),
+      firstName: isAdmin ? "Admin" : "John",
+      lastName: isAdmin ? "User" : "Doe",
+    });
+    navigate("/dashboard", { replace: true });
   };
 
   return (
@@ -186,7 +194,7 @@ const LoginForm = ({ role, title, subtitle }) => {
           {/* Footer */}
           <div className="mt-10 border-t border-slate-100 pt-6 text-center">
             <p className="text-xs text-slate-400">
-              Protected by secure authentication
+              Demo sign-in; any non-empty email and password will continue.
             </p>
             <p className="mt-2 text-xs text-slate-400">
               © {new Date().getFullYear()} GreatStack. All rights reserved.
