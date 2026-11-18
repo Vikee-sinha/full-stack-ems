@@ -32,20 +32,25 @@ const LoginLanding = ({ role, subtitle }) => {
             </p>
 
             <div className="space-y-4">
-              {portals.map((portal) => (
+              {portals.map((element) => (
+                
+              
                 <Link
-                  key={portal.href}
-                  to={portal.href}
+                  key={element.href}
+                  to={element.href}
                   className="flex justify-between items-center p-6 rounded-lg bg-slate-200 hover:bg-indigo-50 transition"
                 >
-                  {portal.title}
+                  {element.title}
                   <ArrowRight />
                 </Link>
-              ))}
+              
+               ))} 
             </div>
             {/*footer*/}
             <div className="mt-12 text-center md:text-left text-sm text-slate-400">
               <p>© {new Date().getFullYear()} GreatStack. All rights reserved.</p>
+              <h1 className="text-lg font-semibold">
+              </h1>
             </div>
           </div>
         </div>
