@@ -1,7 +1,7 @@
-import React, { useCallback, useState,useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { dummyEmployeeData, DEPARTMENTS } from '../assets/assets'
 import EmployeeCard from '../components/EmployeeCard'
-import { Plus, Search } from 'lucide-react'
+import { Plus, Search, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from "@/components/ui/input"
 import {
@@ -11,26 +11,33 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import EmployeeForm from '@/components/EmployeeForm'
 
 const Employees = () => {
-  const [employees, setEmployees] = useState([])
+  const [employees, setEmployees] = useState(dummyEmployeeData)
   const [loading, setLoading] = useState(true)
   const [search , setSearch] = useState('')
   const [selectedDept, setSelectedDept] = useState('all')
   const [editEmployee, setEditEmployee] = useState(null)
   const [showCreateModel, setShowCreateModel] = useState(false)
 
-  const fetchEmployees = useCallback(async () => {
+  const fetchEmployees = () => {
     setLoading(true)
     setEmployees(dummyEmployeeData)
-    setTimeout(() => {
-      setLoading(false)
-    }, 1000)
-  }, [])
+  }
 
   useEffect(() => {
-    fetchEmployees()
+    const timeoutId = setTimeout(() => setLoading(false), 1000)
+    return () => clearTimeout(timeoutId)
   }, [])
+
+  const openEditEmployee = (employee) => {
+    setEditEmployee(employee)
+  }
+
+  const closeEditEmployee = () => {
+    setEditEmployee(null)
+  }
 
   const filtered = employees.filter((emp)=> `${emp.firstName} ${emp.lastName}`.toLowerCase().includes(search.toLowerCase()) && (selectedDept === 'all' || emp.department === selectedDept))
 
@@ -83,7 +90,7 @@ const Employees = () => {
             <p className='col-span-full text-center py-16 text-slate-400 bg-white rounded-2xl border border-dashed border-slate-200'>No employee found</p>
           ) : (
             filtered.map((emp) => (
-            <EmployeeCard key={emp.id} employee={emp} onDelete={fetchEmployees} onEdit={(e)=>setEditEmployee(e)}/>
+            <EmployeeCard key={emp.id} employee={emp} onDelete={fetchEmployees} onEdit={openEditEmployee}/>
             ))
           )}
         </div>
@@ -94,23 +101,66 @@ const Employees = () => {
         <div className='fixed bg-black/40 backdrop-blur-sm inset-0 z-50 flex item-start justify-center p-4 overflow-y-auto' onClick={()=>setShowCreateModel(false)}>
           <div className='fixed inset-0'/>
           <div className='relative bg-white rounded-2xl shadow-2xl w-full max-w-3xl my-8 animate-fade-in' onClick={(e)=>e.stopPropagation()}>
-            <div className='flex item-center justify-between p-6 pb-0'>
+            <div className='flex items-center justify-between p-6 pb-0'>
               <div>
                 <h2 className='text-lg font-semibold text-slate-900'>Add New Employee</h2>
                 <p className='text-sm text-slate-500 mt-0.5'>Create a user account and employee profile</p>
               </div>
-              <button onClick={()=> setShowCreateModel(false)} className='p-2 rounded-lg hover:bg-slate-100 tranistion-colors text-slate-600'>
+              <button onClick={()=> setShowCreateModel(false)} className='p-2 rounded-lg hover:bg-slate-100 transition-colors text-slate-600'>
                 <X className="w-5 h-5"/>
               </button>
             </div>
-            <div className='p-6'>
-              form
-            </div>
+            <EmployeeForm
+              onSuccess={(employeeData) => {
+                const id = crypto.randomUUID()
+                setEmployees((current) => [
+                  { ...employeeData, id, _id: id, image: null, isDeleted: false },
+                  ...current,
+                ])
+                setShowCreateModel(false)
+              }}
+              onCancel={() => setShowCreateModel(false)}
+            />
           </div>
         </div>
       )}
 
-      {/* Edit Employee Model */}
+      {/* Edit Employee Modal */}
+      {editEmployee && (
+        <div className='fixed inset-0 z-50 flex items-start justify-center p-4 sm:p-6 overflow-y-auto bg-slate-950/45 backdrop-blur-sm' onClick={closeEditEmployee}>
+          <div className='relative w-full max-w-3xl my-4 sm:my-8 overflow-hidden rounded-3xl border border-white/60 bg-white shadow-[0_24px_80px_rgba(15,23,42,0.28)] animate-fade-in' onClick={(e) => e.stopPropagation()}>
+            <div className='flex items-center justify-between border-b border-slate-100 px-5 py-5 sm:px-7'>
+              <div className='flex items-center gap-3.5'>
+                <div className='flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-sm font-semibold text-indigo-700 ring-4 ring-indigo-50'>
+                  {editEmployee.firstName?.[0]}{editEmployee.lastName?.[0]}
+                </div>
+                <div>
+                  <h2 className='text-lg font-semibold text-slate-900'>Edit employee</h2>
+                  <p className='mt-0.5 text-sm text-slate-500'>Update employee information</p>
+                </div>
+              </div>
+              <button type='button' aria-label='Close edit employee modal' onClick={closeEditEmployee} className='flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-800'>
+                <X className='h-4 w-4' />
+              </button>
+            </div>
+
+            <EmployeeForm
+              initialData={editEmployee}
+              onSuccess={(employeeData) => {
+                setEmployees((current) =>
+                  current.map((employee) =>
+                    employee.id === editEmployee.id
+                      ? { ...employee, ...employeeData }
+                      : employee,
+                  ),
+                )
+                closeEditEmployee()
+              }}
+              onCancel={closeEditEmployee}
+            />
+          </div>
+        </div>
+      )}
     </div>
   )
 }

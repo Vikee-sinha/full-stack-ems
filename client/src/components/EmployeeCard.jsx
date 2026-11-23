@@ -34,7 +34,7 @@ const EmployeeCard = ({ employee, onDelete, onEdit }) => {
             </button>
           </div>
         )}
-
+        
         <div className="p-5">
             <h3 className="text-lg text-slate-800">{employee.firstName} {employee.lastName}</h3>
             <p className='text-xs text-slate-500'>{employee.position}</p>
