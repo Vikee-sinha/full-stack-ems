@@ -22,8 +22,8 @@ const Employees = () => {
   const [showCreateModel, setShowCreateModel] = useState(false)
 
   const fetchEmployees = () => {
-    setLoading(true)
     setEmployees(dummyEmployeeData)
+    setLoading(false)
   }
 
   useEffect(() => {
@@ -98,7 +98,7 @@ const Employees = () => {
 
       {/* Create Employee Modal */}
       {showCreateModel && (
-        <div className='fixed bg-black/40 backdrop-blur-sm inset-0 z-50 flex item-start justify-center p-4 overflow-y-auto' onClick={()=>setShowCreateModel(false)}>
+        <div className='fixed bg-black/40 backdrop-blur-sm inset-0 z-50 flex items-start justify-center p-4 overflow-y-auto' onClick={()=>setShowCreateModel(false)}>
           <div className='fixed inset-0'/>
           <div className='relative bg-white rounded-2xl shadow-2xl w-full max-w-3xl my-8 animate-fade-in' onClick={(e)=>e.stopPropagation()}>
             <div className='flex items-center justify-between p-6 pb-0'>
@@ -106,7 +106,7 @@ const Employees = () => {
                 <h2 className='text-lg font-semibold text-slate-900'>Add New Employee</h2>
                 <p className='text-sm text-slate-500 mt-0.5'>Create a user account and employee profile</p>
               </div>
-              <button onClick={()=> setShowCreateModel(false)} className='p-2 rounded-lg hover:bg-slate-100 transition-colors text-slate-600'>
+              <button type='button' aria-label='Close create employee dialog' onClick={()=> setShowCreateModel(false)} className='p-2 rounded-lg hover:bg-slate-100 transition-colors text-slate-600'>
                 <X className="w-5 h-5"/>
               </button>
             </div>
