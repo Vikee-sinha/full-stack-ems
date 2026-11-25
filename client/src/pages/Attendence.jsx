@@ -1,8 +1,53 @@
-const Attendence = () => {
-  return (
-    <div>Attendence</div>
+import { dummyAttendanceData } from "@/assets/assets"
+import AttendenceHistory from "@/components/attencence/AttendenceHistory"
+import AttendenceStats from "@/components/attencence/AttendenceStats"
+import CheckInButton from "@/components/attencence/checkInButton"
+import { useCallback, useEffect, useState } from "react"
 
+const Attendence = () => {
+
+  const [history, setHistory] = useState([])
+  const [loading,setLoading] = useState(true)
+  const [isDeleted, setIsDeleted] = useState(false)
+
+  const fetchData = useCallback(async ()=>{
+    setHistory(dummyAttendanceData)
+    setTimeout(()=>{
+      setLoading(false)
+    },1000)
+  },[])
+
+  useEffect(()=>{
+    fetchData()
+  },[fetchData]);
+
+  if(loading)return <div>Loading...</div>
+
+  const today = new Date()
+  today.setHours(0,0,0,0)
+  const todayRecord = history.find((r)=>new Date(r.date).toDateString()===today.toDateString())
+
+  return (
+    <div className="animate-fade-in">
+      <div className="page-header">
+        <h1 className="page-title">Attendence</h1>
+        <p className="page-subtitle">Track your work hours and daily check-ins</p>
+      </div>
+
+      {isDeleted ?(
+        <div className="mb-8 p-6 bg-rose-50 border border-rose-200 rounded-2xl text-center">
+          <p className="text-rose-600">You can no longer clock in or out because your employee records have been marked as deleted</p>
+        </div>
+      ):(<div className="mb-8">
+        <CheckInButton todayRecord={todayRecord} onAction={fetchData} />
+      </div>)}
+      <AttendenceStats history={history}/>
+
+      <div>
+      <AttendenceHistory history={history}/>
+    </div>
     
+    </div>
   )
 }
 
