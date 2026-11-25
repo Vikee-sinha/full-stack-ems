@@ -29,7 +29,7 @@ const Employees = () => {
   useEffect(() => {
     const timeoutId = setTimeout(() => setLoading(false), 1000)
     return () => clearTimeout(timeoutId)
-  }, [])
+  }, [selectedDept])
 
   const openEditEmployee = (employee) => {
     setEditEmployee(employee)
