@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 
 const LoginForm = ({ role, title, subtitle }) => {
-  const isAdmin = role === "admin";
+  const isAdmin = role === "ADMIN";
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");

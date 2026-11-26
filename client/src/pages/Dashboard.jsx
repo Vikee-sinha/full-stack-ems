@@ -1,25 +1,33 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import EmployeeDashboard from '../components/EmployeeDashboard'
 import { dummyEmployeeDashboardData, dummyAdminDashboardData } from '../assets/assets'
 import AdminDashboard from '../components/AdminDashboard'
+import { getCurrentUser } from '../auth'
 
 const Dashboard = () => {
-  const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
+  const currentUser = getCurrentUser()
+  const isAdmin = currentUser?.role === 'ADMIN'
+  const data = isAdmin
+    ? dummyAdminDashboardData
+    : {
+        ...dummyEmployeeDashboardData,
+        employee: {
+          ...dummyEmployeeDashboardData.employee,
+          firstName: currentUser?.firstName || dummyEmployeeDashboardData.employee.firstName,
+          lastName: currentUser?.lastName || dummyEmployeeDashboardData.employee.lastName,
+          position: currentUser?.position || dummyEmployeeDashboardData.employee.position,
+        },
+      }
 
   useEffect(() => {
-    setData(dummyAdminDashboardData) // Replace with actual API call to fetch dashboard data
-    setTimeout(() => {
-      setLoading(false)
-    }, 1000)
+    const timeoutId = setTimeout(() => setLoading(false), 1000)
+    return () => clearTimeout(timeoutId)
   }, [])
 
   if (loading) return <p>Loading...</p>
-  if (!data) return <p className="text-center text-slate-500 py-12">No data available</p>
 
-  const normalizedRole = String(data?.role || '').toUpperCase()
-
-  if (normalizedRole === 'ADMIN') {
+  if (isAdmin) {
     return <AdminDashboard data={data} />
   }
 
