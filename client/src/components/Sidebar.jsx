@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { dummyProfileData } from '../assets/assets'
+import { getCurrentUser } from '../auth'
 import { CalendarIcon, ChevronRightIcon, DollarSignIcon, FileTextIcon, LayoutGridIcon, LogOutIcon, MenuIcon, SettingsIcon, UserIcon , XIcon } from 'lucide-react'
 
 const Sidebar = () => {
     const { pathname } = useLocation()
     const [userName, setUserName] = useState('')
     const [mobileOpen, setMobileOpen] = useState(false)
+    const currentUser = getCurrentUser()
 
     useEffect(()=>{
         setUserName(dummyProfileData.firstName + " "+dummyProfileData.lastName)
@@ -17,7 +19,7 @@ const Sidebar = () => {
         setMobileOpen(false)
     },[pathname])
 
-    const role = "" || "EMPLOYEE";
+    const role = currentUser?.role || "EMPLOYEE";
     const navItems = [
         {name: "Dashboard", href: "/dashboard", icon: LayoutGridIcon},
         role === "ADMIN" ? 
